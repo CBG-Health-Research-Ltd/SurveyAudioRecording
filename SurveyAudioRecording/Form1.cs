@@ -154,13 +154,13 @@ namespace SurveyAudioRecording
 
             if (record == "record")
             {
-                string info  = File.ReadLines(@"C:\AudioRecording\AudioFilename.txt").First();
+                string info  = File.ReadLines(@"C:\CBGShared\AudioRecording\AudioFilename.txt").First();
                 waveSource = new WaveInEvent();
                 waveSource.WaveFormat = new WaveFormat(6500, 1);
                 waveSource.DataAvailable += new EventHandler<WaveInEventArgs>(waveSource_DataAvailable);
                 string fileName = latestFile.Replace(' ', '_') + "_" + DateTime.Now.ToString("h_mm_ss tt").Replace(' ', '_') + info;
                 fileName = ProcessRecordedFileName(fileName);
-                string tempFile = (@"C:\RecordedQuestions\" + fileName + ".wav");
+                string tempFile = (@"C:\CBGShared\recordedquestions\" + fileName + ".wav");
                 waveFile = new WaveFileWriter(tempFile, waveSource.WaveFormat);
                 waveSource.StartRecording();
                 recording = true;
@@ -181,6 +181,14 @@ namespace SurveyAudioRecording
             else if (info.Contains("NZAY9"))
             {
                 return info.Replace("NZAY9", "NZHSAY9");
+            }
+            if (info.Contains("NHC10"))
+            {
+                return info.Replace("NHC10", "NZHSCY10");
+            }
+            else if (info.Contains("NHA10"))
+            {
+                return info.Replace("NHA10", "NZHSAY10");
             }
             else
             {
@@ -226,9 +234,9 @@ namespace SurveyAudioRecording
                     {
                         //Must ensure that length is greater than 2 in order to avoid index out of range exception.
                         //Any element in list with more than just QN->SPN will have greater than 2 length.
-                        if ((showcardList[i].Length > 4) && showcardList[i][4] == "record")//Checks to see that record exists.
+                        if ((showcardList[i].Length > 2) && showcardList[i][2] == "record")//Checks to see that record exists.
 
-                        { record = (showcardList[i])[4]; }//Because record is found in 3rd column.
+                        { record = (showcardList[i])[2]; }//Because record is found in 3rd column.
                         break;
                     }
                     i++;
