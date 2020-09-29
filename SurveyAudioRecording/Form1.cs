@@ -232,6 +232,7 @@ namespace SurveyAudioRecording
                 {
                     if ((showcardList[i])[0] == questionNum)//Page num is first element i.e. 0 index of showcard list entries.
                     {
+                        //THIS CODE IS AMATEUR AND COULD BE CLEANED UP. SAME CODE APPLIES IN LAPTOPSHOWCARDS.
                         //Must ensure that length is greater than 2 in order to avoid index out of range exception.
                         //Any element in list with more than just QN->SPN will have greater than 2 length.
                         if ((showcardList[i].Length > 2) && showcardList[i][2] == "record")//Checks to see that record exists.
@@ -291,7 +292,8 @@ namespace SurveyAudioRecording
             {
                 Thread.Sleep(100);
 
-                CheckChrome();
+                //With askia surveys this is obsolete, we need to find a way to mark that a survey is complete and can therefore shut-down the ausio recording app.
+                //CheckChrome();
 
                 MethodInvoker AwaitTextChange = delegate ()
                 {
@@ -368,6 +370,7 @@ namespace SurveyAudioRecording
             Opacity = 100;
         }
 
+        //With askia surveys this is obsolete, we need to find a way to mark that a survey is complete and can therefore shut-down the ausio recording app.
         private void CheckChrome()
         {
             if (Process.GetProcessesByName("chrome").Length == 0)
