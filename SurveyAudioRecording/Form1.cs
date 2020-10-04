@@ -36,7 +36,7 @@ namespace SurveyAudioRecording
         public Form1()
         {
             
-            this.WindowState = FormWindowState.Minimized;
+            this.WindowState = FormWindowState.Minimized;//Using a hidden form, could be done as a windows application and avoid using forms completely.
             this.ShowInTaskbar = false; // This is optional
             waveSource = new WaveInEvent();//Needs to be initialised for event firing inr ecording function.
             recording = false; //needs to be initialised orignially to false for correct functionality.
@@ -46,6 +46,7 @@ namespace SurveyAudioRecording
 
         }
 
+        //Gets the instructions.txt files which determine if a question is to be recorded.
         private void InitialiseShowcards()
         {
             childY9ShowcardList = GetShowcardPageList("CHILDY9");
@@ -54,6 +55,7 @@ namespace SurveyAudioRecording
             adultY10ShowcardList = GetShowcardPageList("ADULTY10");
         }
 
+        //Only allow one instance of survey recording app to be running. The app is launched from Sample Manager when commencing a survey.
         private void closeFirstInstance()
         {
             Process[] pname = Process.GetProcessesByName(AppDomain.CurrentDomain.FriendlyName.Remove(AppDomain.CurrentDomain.FriendlyName.Length - 4));
@@ -63,6 +65,8 @@ namespace SurveyAudioRecording
             }
         }
 
+        //Function read in the tab delimited instructions.txt file. Then processes it to be saved as as look-up list within the application. All happens on initialisation
+        //of application to avoid multiple programs i.e. PageWatcher, LaptopShowcards and this application to be cross-accessing.
         private List<string[]> GetShowcardPageList(string survey)//takes the type of survey CHILD or ADULT to dtetermine list to load.
         {
             string User = Environment.UserName;
@@ -97,7 +101,7 @@ namespace SurveyAudioRecording
                 //so that relevant show-cards will still be displayed.
             }
 
-
+            //Process the instructions.txt file into manageable list.
 
             List<string[]> shoPageList = new List<string[]>();
             char splitter = ' ';
@@ -113,6 +117,8 @@ namespace SurveyAudioRecording
             return shoPageList;
         }
 
+        //Uses the survey label that is sent from askia all questions pageturner.exe start external program logic. survey label is a parameter unique to 
+        //each survey added as a cmd line argument to pageturner.exe call from askia.
         private List<string[]> getShowcardList(string survey)
         {
             survey = survey.ToLower();
@@ -126,10 +132,10 @@ namespace SurveyAudioRecording
                     showcardList = adultY9ShowcardList;
                     break;
                 case ("nha10"):
-                    showcardList = childY9ShowcardList;
+                    showcardList = childY10ShowcardList;
                     break;
                 case ("nhc10"):
-                    showcardList = adultY9ShowcardList;
+                    showcardList = adultY10ShowcardList;
                     break;
 
             }
@@ -288,6 +294,7 @@ namespace SurveyAudioRecording
                         | NotifyFilters.FileName | NotifyFilters.DirectoryName;
             fileWatcher.Filter = "*.txt";
 
+            //Don't neccessarily need to use while(true), this has been adopted from LaptopShowcards method where it could be changed as well.
             while (true)
             {
                 Thread.Sleep(100);
@@ -370,7 +377,7 @@ namespace SurveyAudioRecording
             Opacity = 100;
         }
 
-        //With askia surveys this is obsolete, we need to find a way to mark that a survey is complete and can therefore shut-down the ausio recording app.
+        //With askia surveys this is obsolete, we need to find a way to mark that a survey is complete and can therefore shut-down the audio recording app.
         private void CheckChrome()
         {
             if (Process.GetProcessesByName("chrome").Length == 0)
