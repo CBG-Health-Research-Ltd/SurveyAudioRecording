@@ -26,7 +26,7 @@ namespace SurveyAudioRecording
         List<string[]> adultY10ShowcardList;
 
 
-
+        bool questionObserved = false;
         string[] subStrings;
         bool   recording;
         string latestFile;
@@ -132,10 +132,10 @@ namespace SurveyAudioRecording
                     showcardList = adultY9ShowcardList;
                     break;
                 case ("nha10"):
-                    showcardList = childY10ShowcardList;
+                    showcardList = adultY10ShowcardList;
                     break;
                 case ("nhc10"):
-                    showcardList = adultY10ShowcardList;
+                    showcardList = childY10ShowcardList;
                     break;
 
             }
@@ -299,8 +299,9 @@ namespace SurveyAudioRecording
             {
                 Thread.Sleep(100);
 
+                //IMPORTANT:
                 //With askia surveys this is obsolete, we need to find a way to mark that a survey is complete and can therefore shut-down the ausio recording app.
-                //CheckChrome();
+                CheckActive();
 
                 MethodInvoker AwaitTextChange = delegate ()
                 {
@@ -313,12 +314,15 @@ namespace SurveyAudioRecording
 
                     if (newFile == true || changedFile == true)//Un-comment else for user-interactivity
                     {
+                        questionObserved = true;
+
                         //Below only occurrs on the event of a .txt file update or creation withing QuestionLog folder.
                         //Open a dictionary which contains the relevant bookmark for each question.
 
+                        System.Threading.Thread.Sleep(300);
                         latestFile = getLatest(@"C:\nzhs\questioninformation\QuestionLog\");
 
-                        System.Threading.Thread.Sleep(300);
+                        
                         Thread recordThread = new Thread(new ThreadStart(RecordInSecret));//Operation must run on separate thread.
                         record = ShouldYouRecord(latestFile);
                         recordThread.Start();
@@ -378,9 +382,18 @@ namespace SurveyAudioRecording
         }
 
         //With askia surveys this is obsolete, we need to find a way to mark that a survey is complete and can therefore shut-down the audio recording app.
-        private void CheckChrome()
+        //Solution is below. Monitor QuestionLog and wait until the last observed file is more than 5 minutes ago from the current date. 
+        private void CheckActive()
         {
-            if (Process.GetProcessesByName("chrome").Length == 0)
+            DirectoryInfo questionLogDirectory = new DirectoryInfo(@"C:\nzhs\questioninformation\QuestionLog\");
+            FileInfo lastObservedFile = FindLatestFile(questionLogDirectory);
+            DateTime lastWriteTime = lastObservedFile.LastWriteTime;
+            DateTime dateRightNow = DateTime.Now;
+            TimeSpan dateDifference = dateRightNow - lastWriteTime;
+            double differenceInMinutes = dateDifference.TotalMinutes;
+
+            //questionObserved is true when a file modification or creation has been recognised
+            if (questionObserved == true  && differenceInMinutes > 5)//AND latestfile write time is greater than 5 minutes ago from current date
             {
                 foreach (Process proc in Process.GetProcessesByName("SurveyAudioRecording"))
                 {
