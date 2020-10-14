@@ -393,7 +393,7 @@ namespace SurveyAudioRecording
             double differenceInMinutes = dateDifference.TotalMinutes;
 
             //questionObserved is true when a file modification or creation has been recognised
-            if (questionObserved == true  && differenceInMinutes > 5)//AND latestfile write time is greater than 5 minutes ago from current date
+            if (questionObserved == true  && differenceInMinutes > 10)//AND latestfile write time is greater than 5 minutes ago from current date
             {
                 foreach (Process proc in Process.GetProcessesByName("SurveyAudioRecording"))
                 {
