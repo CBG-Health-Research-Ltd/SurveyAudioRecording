@@ -24,6 +24,8 @@ namespace SurveyAudioRecording
         List<string[]> adultY9ShowcardList;
         List<string[]> childY10ShowcardList;
         List<string[]> adultY10ShowcardList;
+        List<string[]> childY11ShowcardList;
+        List<string[]> adultY11ShowcardList;
 
 
         bool questionObserved = false;
@@ -53,6 +55,8 @@ namespace SurveyAudioRecording
             adultY9ShowcardList = GetShowcardPageList("ADULTY9");
             childY10ShowcardList = GetShowcardPageList("CHILDY10");
             adultY10ShowcardList = GetShowcardPageList("ADULTY10");
+            childY11ShowcardList = GetShowcardPageList("CHILDY11");
+            adultY11ShowcardList = GetShowcardPageList("ADULTY11");
         }
 
         //Only allow one instance of survey recording app to be running. The app is launched from Sample Manager when commencing a survey.
@@ -87,6 +91,12 @@ namespace SurveyAudioRecording
                         break;
                     case ("ADULTY10"):
                         ShowcardPageArray = File.ReadAllLines(@"C:\CBGShared\surveyinstructions\NZHSY10AdultInstructions.txt");
+                        break;
+                    case ("CHILDY11"):
+                        ShowcardPageArray = File.ReadAllLines(@"C:\CBGShared\surveyinstructions\NZHSY11ChildInstructions.txt");
+                        break;
+                    case ("ADULTY11"):
+                        ShowcardPageArray = File.ReadAllLines(@"C:\CBGShared\surveyinstructions\NZHSY11AdultInstructions.txt");
                         break;
                 }
             }
@@ -136,6 +146,12 @@ namespace SurveyAudioRecording
                     break;
                 case ("nhc10"):
                     showcardList = childY10ShowcardList;
+                    break;
+                case ("nha11"):
+                    showcardList = adultY11ShowcardList;
+                    break;
+                case ("nhc11"):
+                    showcardList = childY11ShowcardList;
                     break;
 
             }
@@ -195,6 +211,14 @@ namespace SurveyAudioRecording
             else if (info.Contains("NHA10"))
             {
                 return info.Replace("NHA10", "NZHSAY10");
+            }
+            else if (info.Contains("NHA11"))
+            {
+                return info.Replace("NHA11", "NZHSAY11");
+            }
+            else if (info.Contains("NHC11"))
+            {
+                return info.Replace("NHC11", "NZHSCY11");
             }
             else
             {
@@ -385,21 +409,26 @@ namespace SurveyAudioRecording
         //Solution is below. Monitor QuestionLog and wait until the last observed file is more than 5 minutes ago from the current date. 
         private void CheckActive()
         {
-            DirectoryInfo questionLogDirectory = new DirectoryInfo(@"C:\nzhs\questioninformation\QuestionLog\");
-            FileInfo lastObservedFile = FindLatestFile(questionLogDirectory);
-            DateTime lastWriteTime = lastObservedFile.LastWriteTime;
-            DateTime dateRightNow = DateTime.Now;
-            TimeSpan dateDifference = dateRightNow - lastWriteTime;
-            double differenceInMinutes = dateDifference.TotalMinutes;
-
-            //questionObserved is true when a file modification or creation has been recognised
-            if (questionObserved == true  && differenceInMinutes > 10)//AND latestfile write time is greater than 5 minutes ago from current date
+            if (questionObserved == true)
             {
-                foreach (Process proc in Process.GetProcessesByName("SurveyAudioRecording"))
+                DirectoryInfo questionLogDirectory = new DirectoryInfo(@"C:\nzhs\questioninformation\QuestionLog\");
+                FileInfo lastObservedFile = FindLatestFile(questionLogDirectory);
+                DateTime lastWriteTime = lastObservedFile.LastWriteTime;
+                DateTime dateRightNow = DateTime.Now;
+                TimeSpan dateDifference = dateRightNow - lastWriteTime;
+                double differenceInMinutes = dateDifference.TotalMinutes;
+
+                //questionObserved is true when a file modification or creation has been recognised
+                if (questionObserved == true && differenceInMinutes > 10)//AND latestfile write time is greater than 5 minutes ago from current date
                 {
-                    proc.Kill();
+                    foreach (Process proc in Process.GetProcessesByName("SurveyAudioRecording"))
+                    {
+                        proc.Kill();
+                    }
                 }
             }
+
+          
         }
     }
 }
