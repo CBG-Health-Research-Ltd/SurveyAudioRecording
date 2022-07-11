@@ -26,6 +26,8 @@ namespace SurveyAudioRecording
         List<string[]> adultY10ShowcardList;
         List<string[]> childY11ShowcardList;
         List<string[]> adultY11ShowcardList;
+        List<string[]> childY12ShowcardList;
+        List<string[]> adultY12ShowcardList;
 
 
         bool questionObserved = false;
@@ -57,6 +59,9 @@ namespace SurveyAudioRecording
             adultY10ShowcardList = GetShowcardPageList("ADULTY10");
             childY11ShowcardList = GetShowcardPageList("CHILDY11");
             adultY11ShowcardList = GetShowcardPageList("ADULTY11");
+            childY12ShowcardList = GetShowcardPageList("CHILDY12");
+            adultY12ShowcardList = GetShowcardPageList("ADULTY12");
+
         }
 
         //Only allow one instance of survey recording app to be running. The app is launched from Sample Manager when commencing a survey.
@@ -97,6 +102,12 @@ namespace SurveyAudioRecording
                         break;
                     case ("ADULTY11"):
                         ShowcardPageArray = File.ReadAllLines(@"C:\CBGShared\surveyinstructions\NZHSY11AdultInstructions.txt");
+                        break;
+                    case ("CHILDY12"):
+                        ShowcardPageArray = File.ReadAllLines(@"C:\CBGShared\surveyinstructions\NZHSY12ChildInstructions.txt");
+                        break;
+                    case ("ADULTY12"):
+                        ShowcardPageArray = File.ReadAllLines(@"C:\CBGShared\surveyinstructions\NZHSY12AdultInstructions.txt");
                         break;
                 }
             }
@@ -152,6 +163,12 @@ namespace SurveyAudioRecording
                     break;
                 case ("nhc11"):
                     showcardList = childY11ShowcardList;
+                    break;
+                case ("nha12"):
+                    showcardList = adultY12ShowcardList;
+                    break;
+                case ("nhc12"):
+                    showcardList = childY12ShowcardList;
                     break;
 
             }
@@ -219,6 +236,14 @@ namespace SurveyAudioRecording
             else if (info.Contains("NHC11"))
             {
                 return info.Replace("NHC11", "NZHSCY11");
+            }
+            else if (info.Contains("NHA12"))
+            {
+                return info.Replace("NHA12", "NZHSAY12");
+            }
+            else if (info.Contains("NHC12"))
+            {
+                return info.Replace("NHC12", "NZHSCY12");
             }
             else
             {
