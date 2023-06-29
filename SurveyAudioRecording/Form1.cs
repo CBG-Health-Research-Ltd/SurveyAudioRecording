@@ -28,6 +28,8 @@ namespace SurveyAudioRecording
         List<string[]> adultY11ShowcardList;
         List<string[]> childY12ShowcardList;
         List<string[]> adultY12ShowcardList;
+        List<string[]> childY13ShowcardList;
+        List<string[]> adultY13ShowcardList;
 
 
         bool questionObserved = false;
@@ -61,6 +63,8 @@ namespace SurveyAudioRecording
             adultY11ShowcardList = GetShowcardPageList("ADULTY11");
             childY12ShowcardList = GetShowcardPageList("CHILDY12");
             adultY12ShowcardList = GetShowcardPageList("ADULTY12");
+            childY13ShowcardList = GetShowcardPageList("CHILDY13");
+            adultY13ShowcardList = GetShowcardPageList("ADULTY13");
 
         }
 
@@ -108,6 +112,12 @@ namespace SurveyAudioRecording
                         break;
                     case ("ADULTY12"):
                         ShowcardPageArray = File.ReadAllLines(@"C:\CBGShared\surveyinstructions\NZHSY12AdultInstructions.txt");
+                        break;
+                    case ("CHILDY13"):
+                        ShowcardPageArray = File.ReadAllLines(@"C:\CBGShared\surveyinstructions\NZHSY13ChildInstructions.txt");
+                        break;
+                    case ("ADULTY13"):
+                        ShowcardPageArray = File.ReadAllLines(@"C:\CBGShared\surveyinstructions\NZHSY13AdultInstructions.txt");
                         break;
                 }
             }
@@ -169,6 +179,12 @@ namespace SurveyAudioRecording
                     break;
                 case ("nhc12"):
                     showcardList = childY12ShowcardList;
+                    break;
+                case ("nha13"):
+                    showcardList = adultY13ShowcardList;
+                    break;
+                case ("nhc13"):
+                    showcardList = childY13ShowcardList;
                     break;
 
             }
@@ -244,6 +260,14 @@ namespace SurveyAudioRecording
             else if (info.Contains("NHC12"))
             {
                 return info.Replace("NHC12", "NZHSCY12");
+            }
+            else if (info.Contains("NHA13"))
+            {
+                return info.Replace("NHA13", "NZHSAY13");
+            }
+            else if (info.Contains("NHC13"))
+            {
+                return info.Replace("NHC13", "NZHSCY13");
             }
             else
             {
