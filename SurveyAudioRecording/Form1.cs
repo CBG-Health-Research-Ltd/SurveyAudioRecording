@@ -20,16 +20,11 @@ namespace SurveyAudioRecording
 {
     public partial class Form1 : Form
     {
-        List<string[]> childY9ShowcardList;
-        List<string[]> adultY9ShowcardList;
-        List<string[]> childY10ShowcardList;
-        List<string[]> adultY10ShowcardList;
-        List<string[]> childY11ShowcardList;
-        List<string[]> adultY11ShowcardList;
-        List<string[]> childY12ShowcardList;
-        List<string[]> adultY12ShowcardList;
+        
         List<string[]> childY13ShowcardList;
         List<string[]> adultY13ShowcardList;
+        List<string[]> childY14ShowcardList;
+        List<string[]> adultY14ShowcardList;
 
         //
 
@@ -38,7 +33,6 @@ namespace SurveyAudioRecording
         bool   recording;
         string latestFile;
         string record;//Used as a global to determine if the voice recording is still hapening in secret.
-        string houseHoldID;
 
         public Form1()
         {
@@ -47,6 +41,7 @@ namespace SurveyAudioRecording
             this.ShowInTaskbar = false; // This is optional
             waveSource = new WaveInEvent();//Needs to be initialised for event firing inr ecording function.
             recording = false; //needs to be initialised orignially to false for correct functionality.
+            Directory.CreateDirectory(@"C:\RecordedQuestionsNZHS_FTP\");
             InitialiseShowcards();
             InitializeComponent();
             closeFirstInstance();
@@ -56,16 +51,11 @@ namespace SurveyAudioRecording
         //Gets the instructions.txt files which determine if a question is to be recorded.
         private void InitialiseShowcards()
         {
-            childY9ShowcardList = GetShowcardPageList("CHILDY9");
-            adultY9ShowcardList = GetShowcardPageList("ADULTY9");
-            childY10ShowcardList = GetShowcardPageList("CHILDY10");
-            adultY10ShowcardList = GetShowcardPageList("ADULTY10");
-            childY11ShowcardList = GetShowcardPageList("CHILDY11");
-            adultY11ShowcardList = GetShowcardPageList("ADULTY11");
-            childY12ShowcardList = GetShowcardPageList("CHILDY12");
-            adultY12ShowcardList = GetShowcardPageList("ADULTY12");
+            
             childY13ShowcardList = GetShowcardPageList("CHILDY13");
             adultY13ShowcardList = GetShowcardPageList("ADULTY13");
+            childY14ShowcardList = GetShowcardPageList("CHILD14");
+            adultY14ShowcardList = GetShowcardPageList("ADULT14");
 
         }
 
@@ -90,35 +80,17 @@ namespace SurveyAudioRecording
             {
                 switch (survey)
                 {
-                    case ("CHILDY9"):
-                        ShowcardPageArray = File.ReadAllLines(@"C:\CBGShared\surveyinstructions\NZHSY9ChildInstructions.txt");
-                        break;
-                    case ("ADULTY9"):
-                        ShowcardPageArray = File.ReadAllLines(@"C:\CBGShared\surveyinstructions\NZHSY9AdultInstructions.txt");
-                        break;
-                    case ("CHILDY10"):
-                        ShowcardPageArray = File.ReadAllLines(@"C:\CBGShared\surveyinstructions\NZHSY10ChildInstructions.txt");
-                        break;
-                    case ("ADULTY10"):
-                        ShowcardPageArray = File.ReadAllLines(@"C:\CBGShared\surveyinstructions\NZHSY10AdultInstructions.txt");
-                        break;
-                    case ("CHILDY11"):
-                        ShowcardPageArray = File.ReadAllLines(@"C:\CBGShared\surveyinstructions\NZHSY11ChildInstructions.txt");
-                        break;
-                    case ("ADULTY11"):
-                        ShowcardPageArray = File.ReadAllLines(@"C:\CBGShared\surveyinstructions\NZHSY11AdultInstructions.txt");
-                        break;
-                    case ("CHILDY12"):
-                        ShowcardPageArray = File.ReadAllLines(@"C:\CBGShared\surveyinstructions\NZHSY12ChildInstructions.txt");
-                        break;
-                    case ("ADULTY12"):
-                        ShowcardPageArray = File.ReadAllLines(@"C:\CBGShared\surveyinstructions\NZHSY12AdultInstructions.txt");
-                        break;
                     case ("CHILDY13"):
                         ShowcardPageArray = File.ReadAllLines(@"C:\CBGShared\surveyinstructions\NZHSY13ChildInstructions.txt");
                         break;
                     case ("ADULTY13"):
                         ShowcardPageArray = File.ReadAllLines(@"C:\CBGShared\surveyinstructions\NZHSY13AdultInstructions.txt");
+                        break;
+                    case ("CHILDY14"):
+                        ShowcardPageArray = File.ReadAllLines(@"C:\CBGShared\surveyinstructions\NZHSY14ChildInstructions.txt");
+                        break;
+                    case ("ADULTY14"):
+                        ShowcardPageArray = File.ReadAllLines(@"C:\CBGShared\surveyinstructions\NZHSY14AdultInstructions.txt");
                         break;
                 }
             }
@@ -157,35 +129,17 @@ namespace SurveyAudioRecording
             List<string[]> showcardList = new List<string[]>();
             switch (survey)
             {
-                case ("nzcy9"):
-                    showcardList = childY9ShowcardList;
-                    break;
-                case ("nzay9"):
-                    showcardList = adultY9ShowcardList;
-                    break;
-                case ("nha10"):
-                    showcardList = adultY10ShowcardList;
-                    break;
-                case ("nhc10"):
-                    showcardList = childY10ShowcardList;
-                    break;
-                case ("nha11"):
-                    showcardList = adultY11ShowcardList;
-                    break;
-                case ("nhc11"):
-                    showcardList = childY11ShowcardList;
-                    break;
-                case ("nha12"):
-                    showcardList = adultY12ShowcardList;
-                    break;
-                case ("nhc12"):
-                    showcardList = childY12ShowcardList;
-                    break;
                 case ("nha13"):
                     showcardList = adultY13ShowcardList;
                     break;
                 case ("nhc13"):
                     showcardList = childY13ShowcardList;
+                    break;
+                case ("nha14"):
+                    showcardList = adultY14ShowcardList;
+                    break;
+                case ("nhc14"):
+                    showcardList = childY14ShowcardList;
                     break;
 
             }
@@ -216,7 +170,7 @@ namespace SurveyAudioRecording
                 waveSource.DataAvailable += new EventHandler<WaveInEventArgs>(waveSource_DataAvailable);
                 string fileName = latestFile.Replace(' ', '_') + "_" + DateTime.Now.ToString("h_mm_ss tt").Replace(' ', '_') + info;
                 fileName = ProcessRecordedFileName(fileName);
-                string tempFile = (@"C:\CBGShared\recordedquestions\" + fileName + ".wav");
+                string tempFile = (@"C:\RecordedQuestionsNZHS_FTP\" + fileName + "_forupload" + ".wav");
                 waveFile = new WaveFileWriter(tempFile, waveSource.WaveFormat);
                 waveSource.StartRecording();
                 recording = true;
@@ -229,46 +183,22 @@ namespace SurveyAudioRecording
         private string ProcessRecordedFileName(string info)
         {
             //Just a big if statement for post-processing any filename text. Swap strings for other strings.
-            
-            if (info.Contains("NZCY9"))
-            {
-                return info.Replace("NZCY9", "NZHSCY9");
-            }
-            else if (info.Contains("NZAY9"))
-            {
-                return info.Replace("NZAY9", "NZHSAY9");
-            }
-            if (info.Contains("NHC10"))
-            {
-                return info.Replace("NHC10", "NZHSCY10");
-            }
-            else if (info.Contains("NHA10"))
-            {
-                return info.Replace("NHA10", "NZHSAY10");
-            }
-            else if (info.Contains("NHA11"))
-            {
-                return info.Replace("NHA11", "NZHSAY11");
-            }
-            else if (info.Contains("NHC11"))
-            {
-                return info.Replace("NHC11", "NZHSCY11");
-            }
-            else if (info.Contains("NHA12"))
-            {
-                return info.Replace("NHA12", "NZHSAY12");
-            }
-            else if (info.Contains("NHC12"))
-            {
-                return info.Replace("NHC12", "NZHSCY12");
-            }
-            else if (info.Contains("NHA13"))
+
+            if (info.Contains("NHA13"))
             {
                 return info.Replace("NHA13", "NZHSAY13");
             }
             else if (info.Contains("NHC13"))
             {
                 return info.Replace("NHC13", "NZHSCY13");
+            }
+            else if (info.Contains("NHA14"))
+            {
+                return info.Replace("NHA14", "NZHSAY14");
+            }
+            else if (info.Contains("NHC14"))
+            {
+                return info.Replace("NHC14", "NZHSCY14");
             }
             else
             {
